@@ -9,6 +9,7 @@ axios.defaults.baseURL = "http://localhost:8000"
 
 function PlaidAuth({publicToken}){
   const [account, setAccount] = useState();
+  const [balance, setBalance] = useState(0);
 
   useEffect(()=>{
     async function fetchData(){
@@ -16,7 +17,10 @@ function PlaidAuth({publicToken}){
       console.log("access" + accessToken.data)
       const auth = await axios.post("/auth", {access_token: accessToken.data.accessToken});
       console.log("auth data", auth.data)
+      const balance = await axios.post("/get_account_balances",{access_token: accessToken.data.accessToken})
       setAccount(auth.data.numbers.ach[0])
+      console.log("bal data",JSON.stringify(balance,null,2))
+      setBalance(balance.data.accounts[0].balances.current)
     }
     fetchData()
   }, []);
@@ -24,6 +28,7 @@ function PlaidAuth({publicToken}){
     <>
   <p>Account number: {account.account}</p>
   <p>Routing number: {account.routing}</p>
+  <p>Balance : {balance}</p>
   </>
   );
 }

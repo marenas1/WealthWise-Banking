@@ -47,7 +47,7 @@ app.post('/create_link_token', async (req, res) => {
     const createTokenResponse = await plaidClient.linkTokenCreate(plaidRequest);
     res.json(createTokenResponse.data);
   } catch (error) {
-    res.status(500).send("failure");
+    res.status(500).send("Failed to create link token");
   }
 });
 
@@ -62,9 +62,22 @@ app.post("/auth", async function (request,response) {
          
           
     }catch(e){
-        response.status(500).send("failed")
+        response.status(500).send("Failed to authorize")
     }
 })
+
+app.post("/get_account_balances", async function (req, res) {
+    try{
+        const access_token = req.body.access_token;
+        const plaidRequest = {
+            access_token: access_token,
+        };
+        const plaidResponse = await plaidClient.accountsBalanceGet(plaidRequest);
+        res.json(plaidResponse.data);
+    }catch(e){
+        res.status(500).send("Failed to get balance")
+    }
+});
 
 
 
@@ -88,7 +101,7 @@ app.post('/exchange_public_token', async function (
       response.json({ accessToken});
     } catch (error) {
       // handle error
-      response.status(500).send("failed")
+      response.status(500).send("Failed to exchange public token")
     }
   });
 
