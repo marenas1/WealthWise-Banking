@@ -1,10 +1,8 @@
-
-//import './App.css'
-
 import { usePlaidLink } from 'react-plaid-link';
 import axios from "axios"
 import { useEffect, useState } from "react"
 import PropTypes from "prop-types"
+import LandingPage from './pages/landingPage';
 axios.defaults.baseURL = "http://localhost:8000"
 
 function PlaidAuth({publicToken}){
@@ -61,7 +59,7 @@ function App() {
     },
   });
 
-  return publicToken ? (<PlaidAuth publicToken={publicToken}/>) : (
+  return publicToken ? (<LandingPage></LandingPage>) : (
     <button onClick={() => open()} disabled={!ready}>
       Connect a bank account
     </button>
