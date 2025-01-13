@@ -29,7 +29,7 @@ function LandingPage() {
             const accessToken = accessTokenResponse.data.accessToken;
     
             // Store access token in localStorage
-            localStorage.setItem("accessToken", accessToken);
+            sessionStorage.setItem("accessToken", accessToken);
     
             // Log the access token (optional)
             console.log("accessToken", accessToken);
