@@ -3,7 +3,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
-
 axios.defaults.baseURL = "http://localhost:8000";
 
 
@@ -30,7 +29,12 @@ function LandingPage() {
     
             // Store access token in localStorage
             sessionStorage.setItem("accessToken", accessToken);
-    
+
+            // Retreive Plaid Account Data and Save To Session
+            const accounts = await axios.post("/get_account_balances",{access_token: accessToken})
+            sessionStorage.setItem("accounts",JSON.stringify(accounts))//this serializes data cuz its stored as string
+            console.log("bal data",JSON.stringify(accounts,null,2))
+            
             // Log the access token (optional)
             console.log("accessToken", accessToken);
     

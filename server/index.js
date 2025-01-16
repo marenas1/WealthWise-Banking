@@ -72,7 +72,7 @@ app.post("/get_account_balances", async function (req, res) {
         const plaidRequest = {
             access_token: access_token,
         };
-        const plaidResponse = await plaidClient.accountsBalanceGet(plaidRequest);
+        const plaidResponse = await plaidClient.accountsGet(plaidRequest);
         res.json(plaidResponse.data);
     }catch(e){
         res.status(500).send("Failed to get balance")
