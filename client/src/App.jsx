@@ -2,7 +2,7 @@ import { usePlaidLink } from 'react-plaid-link';
 import axios from "axios"
 import { useEffect, useState } from "react"
 import PropTypes from "prop-types"
-import LandingPage from './pages/landingPage';
+import LandingPage from './pages/LandingPage';
 axios.defaults.baseURL = "http://localhost:8000"
 
 function PlaidAuth({publicToken}){
@@ -19,6 +19,7 @@ function PlaidAuth({publicToken}){
       setAccount(auth.data.numbers.ach[0])
       console.log("bal data",JSON.stringify(balance,null,2))
       setBalance(balance.data.accounts[0].balances.current)
+
     }
     fetchData()
   }, []);

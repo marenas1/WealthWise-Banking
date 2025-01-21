@@ -38,7 +38,7 @@ app.post('/create_link_token', async (req, res) => {
       client_user_id: "user",
     },
     client_name: 'Plaid Test App',
-    products: ['auth'],
+    products: ["auth","transactions"],
     language: 'en',
     redirect_uri: 'http://localhost:5173/',
     country_codes: ['US'],
@@ -78,6 +78,39 @@ app.post("/get_account_balances", async function (req, res) {
         res.status(500).send("Failed to get balance")
     }
 });
+
+app.post("/get_transactions", async function (req, res) {
+  try {
+      const { access_token, start_date, end_date } = req.body; // Get access_token, start_date, and end_date from request body
+      
+      // Validate that all required parameters are provided
+      if (!access_token || !start_date || !end_date) {
+          return res.status(400).send("Missing required parameters");
+      }
+
+      // Plaid request to fetch transactions
+      const plaidRequest = {
+          access_token: access_token,
+          start_date: start_date,
+          end_date: end_date,
+          options: {
+              count: 100, // Adjust the number of transactions to fetch
+              offset: 0,  // Pagination offset (use for further requests)
+          }
+      };
+
+      // Make API call to Plaid to get transactions
+      const plaidResponse = await plaidClient.transactionsGet(plaidRequest);
+
+      // Return the transactions data
+      res.json(plaidResponse.data);
+  } catch (e) {
+      console.error("Error fetching transactions:", e);
+      res.status(500).send("Failed to fetch transactions",e);
+  }
+});
+
+
 
 
 

@@ -37,7 +37,22 @@ function LandingPage() {
             
             // Log the access token (optional)
             console.log("accessToken", accessToken);
-    
+
+            // Retrieve Transactions for the past month and Save to Session
+            const today = new Date();
+            const startDate = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()).toISOString().split("T")[0]; // Format: YYYY-MM-DD
+            const endDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+            const transactionsResponse = await axios.post("/get_transactions", {
+              access_token: accessToken,
+              start_date: startDate,
+              end_date: endDate,
+            });
+
+            const transactions = transactionsResponse.data.transactions;
+            sessionStorage.setItem("transactions", JSON.stringify(transactions)); // Store transactions data
+            console.log("Transactions data:", JSON.stringify(transactions, null, 2));
+        
             // Redirect to the homepage using useNavigate
             window.location.href="/home";
           } catch (error) {
