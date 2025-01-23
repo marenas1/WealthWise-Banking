@@ -114,7 +114,6 @@ app.post("/get_transactions", async function (req, res) {
 
 
 
-
 app.post('/exchange_public_token', async function (
     request,
     response,
