@@ -5,83 +5,57 @@ import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
 axios.defaults.baseURL = "http://localhost:8000";
 
-
-
 function LandingPage() {
- const [linkToken, setLinkToken] = useState();
+  const [linkToken, setLinkToken] = useState();
 
- useEffect(()=>{
+  useEffect(()=>{
     async function fetchLinkToken(){
-      const response = await axios.post("/create_link_token")
-      setLinkToken(response.data.link_token)
-      //console.log(response.data)
+      const response = await axios.post("/create_link_token");
+      setLinkToken(response.data.link_token);
     }
-    fetchLinkToken()
- },[]);
-//Plaid Link Hook
- const { open, ready } = usePlaidLink({
+    fetchLinkToken();
+  },[]);
+
+  //Plaid Link Hook
+  const { open, ready } = usePlaidLink({
     token: linkToken,
     onSuccess: async (public_token, metadata) => {
         try {
-            // Exchange public token for access token
+            console.log(metadata)
             const accessTokenResponse = await axios.post("/exchange_public_token", { public_token });
             const accessToken = accessTokenResponse.data.accessToken;
     
-            // Store access token in localStorage
             sessionStorage.setItem("accessToken", accessToken);
 
-            // Retreive Plaid Account Data and Save To Session
-            const accounts = await axios.post("/get_account_balances",{access_token: accessToken})
-            sessionStorage.setItem("accounts",JSON.stringify(accounts))//this serializes data cuz its stored as string
-            console.log("bal data",JSON.stringify(accounts,null,2))
+            const accounts = await axios.post("/get_account_balances", { access_token: accessToken });
+            sessionStorage.setItem("accounts", JSON.stringify(accounts));
             
-            // Log the access token (optional)
-            console.log("accessToken", accessToken);
-
-            // Retrieve Transactions for the past 30 days and Save to Session
             const today = new Date();
             const startDate = new Date(today);
-            startDate.setDate(today.getDate() - 60); // Subtract 30 days
-            const formattedStartDate = startDate.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-            const endDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-
+            startDate.setDate(today.getDate() - 60);
+            const formattedStartDate = startDate.toISOString().split("T")[0];
+            const endDate = today.toISOString().split("T")[0];
 
             const transactionsResponse = await axios.post("/get_transactions", {
               access_token: accessToken,
               start_date: formattedStartDate,
-              end_date: endDate,
+              end_date: endDate
             });
 
             const transactions = transactionsResponse.data.transactions;
-            sessionStorage.setItem("transactions", JSON.stringify(transactions)); // Store transactions data
-            console.log("Transactions data:", JSON.stringify(transactions, null, 2));
-
-            // Retrieve Income and save to session
-            // Make the API call to get income data
+            sessionStorage.setItem("transactions", JSON.stringify(transactions));
             
-          
-
-        
-            // Redirect to the homepage using useNavigate
-            window.location.href="/home";
+            window.location.href = "/home";
           } catch (error) {
             console.error("Error exchanging public token for access token:", error);
           }
-    console.log("success",public_token,metadata)
     },
- });
-
- 
-
-
-
+  });
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
       <header className="bg-financial-primary text-white py-4 shadow-md">
         <div className="container mx-auto px-6 flex justify-between items-center">
-            {/* Logo and Title */}
             <div className="flex items-center"> 
             <img
                 src={logo}
@@ -90,13 +64,9 @@ function LandingPage() {
             />
             <h1 className="text-2xl font-bold">WealthWise</h1>
             </div>
-
-            
         </div>
       </header>
 
-
-      {/* Hero Section */}
       <section className="bg-financial-light py-12 text-center">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-extrabold text-gray-800 mb-4">
@@ -105,14 +75,11 @@ function LandingPage() {
           <p className="text-lg text-gray-600 mb-6">
             Manage your expenses, track your income, and achieve financial goals with ease.
           </p>
-          
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          {/* Stat 1 */}
           <div className="p-6 bg-gray-100 rounded-lg shadow-md">
             <FaChartLine className="text-financial-primary text-4xl mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700">Track Expenses</h3>
@@ -120,7 +87,6 @@ function LandingPage() {
               Stay on top of your spending with detailed transaction tracking.
             </p>
           </div>
-          {/* Stat 2 */}
           <div className="p-6 bg-gray-100 rounded-lg shadow-md">
             <FaPiggyBank className="text-financial-primary text-4xl mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700">Grow Savings</h3>
@@ -128,7 +94,6 @@ function LandingPage() {
               Plan and save for your financial goals with our easy-to-use tools.
             </p>
           </div>
-          {/* Stat 3 */}
           <div className="p-6 bg-gray-100 rounded-lg shadow-md">
             <FaRegMoneyBillAlt className="text-financial-primary text-4xl mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700">Maximize Income</h3>
@@ -139,20 +104,27 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Call-to-Action Section */}
       <section className="bg-financial-primary text-white py-12 text-center">
         <div className="container mx-auto px-6">
           <h3 className="text-3xl font-bold mb-4">Ready to Take Charge?</h3>
           <p className="text-lg text-gray-200 mb-6">
             Sign up today and start your journey to financial freedom.
           </p>
-          <button onClick={() => open()} disabled={!ready}>
+          <button 
+            onClick={() => open()} 
+            disabled={!ready} 
+            className="bg-green-500 text-white py-3 px-6 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          >
             Connect a bank account
           </button>
+          <div className="mt-4 text-gray-200 text-sm">
+            <p>Remember to use the following credentials for testing:</p>
+            <p><strong>Username:</strong> custom_matt_arenas</p>
+            <p><strong>Password:</strong> Any password</p>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-gray-800 text-white py-4 text-center">
         <p className="text-sm">
           © 2024 Finance Tracker. All rights reserved.

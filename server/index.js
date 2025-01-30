@@ -1,23 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
-const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
+const { Configuration, PlaidApi, PlaidEnvironments } = require("plaid");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
+// Plaid Client Configuration
 const plaidClientId = process.env.PLAID_CLIENT_ID;
 const plaidSecret = process.env.PLAID_SECRET;
-const plaidEnv = process.env.PLAID_ENV;
-
 
 const configuration = new Configuration({
-  basePath: PlaidEnvironments.sandbox,
+  basePath: PlaidEnvironments.sandbox, // Use sandbox environment
   baseOptions: {
     headers: {
-      'PLAID-CLIENT-ID': plaidClientId,
-      'PLAID-SECRET': plaidSecret,
+      "PLAID-CLIENT-ID": plaidClientId,
+      "PLAID-SECRET": plaidSecret,
     },
   },
 });
@@ -28,10 +26,85 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post("/hello", (req, res) => {
-  res.json({ message: "hello " + req.body.name });
+// ---- Create Public Token with Pre-Populated Account ----
+app.post('/sandbox/create_prepopulated_public_token', async (req, res) => {
+  const { institution_id, initial_products } = req.body;
+
+  // Validate the request body
+  if (!institution_id || !initial_products) {
+    return res.status(400).send("Missing required fields: institution_id, initial_products");
+  }
+
+  try {
+    // Create public token with Plaid sandbox
+    const publicTokenResponse = await plaidClient.sandboxPublicTokenCreate({
+      institution_id, // Required: The ID of the institution the Item will be associated with
+      initial_products, // Required: The products to initially pull for the Item (e.g., transactions)
+      
+    });
+    
+    const publicToken = publicTokenResponse.data.public_token;
+    console.log("public" + publicToken)
+
+    // Exchange the public token for an access token
+    const exchangeRequest = {
+      public_token: publicToken,
+    };
+    const exchangeTokenResponse = await plaidClient.itemPublicTokenExchange(exchangeRequest);
+    const accessToken = exchangeTokenResponse.data.access_token;
+
+    // Log the access token and send it back in the response
+    console.log("Access token:", accessToken);
+    res.json({ access_token: accessToken }); // Send access token to client
+
+  } catch (error) {
+    console.error("Error creating public token:", error);
+    res.status(500).send("Failed to create public token");
+  }
 });
 
+app.post('/webhook', (req, res) => {
+  const webhookData = req.body;
+
+  // Log the webhook data for testing
+  console.log('Received Webhook:', webhookData);
+
+  // You can handle the data as needed, e.g., update the user's account status
+  // Example: check for product readiness
+  if (webhookData.item_ready) {
+    // The product is now ready for use
+    // You can trigger further actions here, like fetching transactions
+    console.log('Product is ready for use!');
+  }
+
+  res.status(200).send('Webhook received');
+});
+
+
+
+
+
+
+// ---- Trigger Transactions Refresh (Optional for Testing) ----
+app.post("/sandbox/refresh_transactions", async (req, res) => {
+  try {
+    const { access_token } = req.body;
+
+    if (!access_token) {
+      return res.status(400).send("Missing required access_token");
+    }
+
+    await plaidClient.transactionsRefresh({ access_token });
+
+    res.json({ message: "Transactions refreshed successfully" });
+  } catch (error) {
+    console.error("Error refreshing transactions:", error.response?.data);
+    res.status(500).send("Failed to refresh transactions");
+  }
+});
+
+
+// ---- Link Token Creation ----
 app.post('/create_link_token', async (req, res) => {
   const plaidRequest = {
     user: {
@@ -45,101 +118,158 @@ app.post('/create_link_token', async (req, res) => {
   };
   try {
     const createTokenResponse = await plaidClient.linkTokenCreate(plaidRequest);
+    //Returns Public Token
     res.json(createTokenResponse.data);
   } catch (error) {
     res.status(500).send("Failed to create link token");
   }
 });
 
-app.post("/auth", async function (request,response) {
-    try{
-        const access_token = request.body.access_token;
-        const plaidRequest = {
-            access_token: access_token,
-        };
-        const plaidResponse = await plaidClient.authGet(plaidRequest);
-        response.json(plaidResponse.data);
-         
-          
-    }catch(e){
-        response.status(500).send("Failed to authorize")
-    }
-})
+// ---- Exchange Public Token ----
+app.post("/exchange_public_token", async (req, res) => {
+  try {
+    const { public_token } = req.body;
 
-app.post("/get_account_balances", async function (req, res) {
-    try{
-        const access_token = req.body.access_token;
-        const plaidRequest = {
-            access_token: access_token,
-        };
-        const plaidResponse = await plaidClient.accountsGet(plaidRequest);
-        res.json(plaidResponse.data);
-    }catch(e){
-        res.status(500).send("Failed to get balance")
+    if (!public_token) {
+      return res.status(400).send("Missing public_token");
     }
+
+    const exchangeResponse = await plaidClient.itemPublicTokenExchange({
+      public_token,
+    });
+
+    const accessToken = exchangeResponse.data.access_token;
+    const itemID = exchangeResponse.data.item_id;
+
+    res.json({ accessToken, itemID });
+  } catch (error) {
+    console.error("Error exchanging public token:", error.response?.data);
+    res.status(500).send("Failed to exchange public token");
+  }
 });
 
-app.post("/get_transactions", async function (req, res) {
+// ---- Auth Endpoint ----
+app.post("/auth", async (req, res) => {
   try {
-      const { access_token, start_date, end_date } = req.body; // Get access_token, start_date, and end_date from request body
-      
-      // Validate that all required parameters are provided
-      if (!access_token || !start_date || !end_date) {
-          return res.status(400).send("Missing required parameters");
-      }
+    const { access_token } = req.body;
 
-      // Plaid request to fetch transactions
-      const plaidRequest = {
-          access_token: access_token,
-          start_date: start_date,
-          end_date: end_date,
-          options: {
-              count: 100, // Adjust the number of transactions to fetch
-              offset: 0,  // Pagination offset (use for further requests)
-          }
-      };
+    if (!access_token) {
+      return res.status(400).send("Missing required access_token");
+    }
 
-      // Make API call to Plaid to get transactions
-      const plaidResponse = await plaidClient.transactionsGet(plaidRequest);
+    const plaidResponse = await plaidClient.authGet({ access_token });
+    res.json(plaidResponse.data);
+  } catch (error) {
+    console.error("Error fetching auth data:", error.response?.data);
+    res.status(500).send("Failed to fetch auth data");
+  }
+});
 
-      // Return the transactions data
-      res.json(plaidResponse.data);
-  } catch (e) {
-      console.error("Error fetching transactions:", e);
-      res.status(500).send("Failed to fetch transactions",e);
+// ---- Identity Call ----
+app.post("/get_identity", async (req, res) => {
+  try {
+    // Fetch identity information from Plaid
+    const plaidResponse = await plaidClient.identityGet(req);
+
+    // Extract account holder details (name, phone, and email)
+    const accountHolders = plaidResponse.data.accounts.flatMap(account => account.owners);
+
+    // Map to extract desired fields (name, phone, and email)
+    const identities = accountHolders.map(owner => ({
+      name: owner.full_name,
+      phone: owner.phone_number,
+      email: owner.email,
+    }));
+
+    // Send the identities back in the response
+    res.status(200).json(identities);
+
+  } catch (error) {
+    // Handle error
+    console.error("Error fetching identity:", error.response?.data || error);
+    res.status(500).send("Failed to get account identity");
   }
 });
 
 
+// ---- Account Balances ----
+app.post("/get_account_balances", async (req, res) => {
+  try {
+    const { access_token } = req.body;
 
-
-
-app.post('/exchange_public_token', async function (
-    request,
-    response,
-    next,
-  ) {
-    const publicToken = request.body.public_token;
-    try {
-      const plaidResponse = await plaidClient.itemPublicTokenExchange({
-        public_token: publicToken,
-      });
-  
-      // These values should be saved to a persistent database and
-      // associated with the currently signed-in user
-      const accessToken = plaidResponse.data.access_token;
-      const itemID = plaidResponse.data.item_id;
-  
-      response.json({ accessToken});
-    } catch (error) {
-      // handle error
-      response.status(500).send("Failed to exchange public token")
+    if (!access_token) {
+      return res.status(400).send("Missing required access_token");
     }
-  });
 
+    const plaidResponse = await plaidClient.accountsGet({ access_token });
+    res.json(plaidResponse.data);
+  } catch (error) {
+    console.error("Error fetching account balances:", error.response?.data);
+    res.status(500).send("Failed to get account balances");
+  }
+});
 
+// ---- Regular Transactions ----
+app.post("/get_transactions", async (req, res) => {
+  try {
+    const { access_token, start_date, end_date } = req.body;
 
+    if (!access_token) {
+      return res.status(400).send("Missing required access_token");
+    }
+
+    if (!start_date || !end_date) {
+      return res.status(400).send("Missing start_date or end_date");
+    }
+
+    const plaidRequest = {
+      access_token,
+      start_date,
+      end_date,
+      options: {
+        count: 100,
+        offset: 0,
+      },
+    };
+
+    const plaidResponse = await plaidClient.transactionsGet(plaidRequest);
+    res.json(plaidResponse.data);
+  } catch (error) {
+    console.error("Error fetching transactions:", error.response?.data);
+    res.status(500).send("Failed to fetch transactions");
+  }
+});
+
+// ---- Recurring Transactions ----
+app.post("/get_transactions_recurring", async (req, res) => {
+  try {
+    const { access_token } = req.body;
+
+    if (!access_token) {
+      return res.status(400).send("Missing required access_token");
+    }
+
+    const plaidResponse = await plaidClient.transactionsRecurringGet({
+      access_token,
+    });
+
+    const inflowStreams = plaidResponse.data.inflow_streams;
+    const outflowStreams = plaidResponse.data.outflow_streams;
+
+    res.json({ inflowStreams, outflowStreams });
+  } catch (error) {
+    console.error("Error fetching recurring transactions:", error.response?.data);
+    res.status(500).send("Failed to fetch recurring transactions");
+  }
+});
+
+// ---- Test Hello Endpoint ----
+app.post("/hello", (req, res) => {
+  res.json({ message: `Hello ${req.body.name}` });
+});
+
+// ---- Start Server ----
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server has started on port ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

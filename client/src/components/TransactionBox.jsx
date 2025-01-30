@@ -8,13 +8,37 @@ TransactionBox.propTypes = {
 
 function TransactionBox(props) {
   // Only get the last 5 transactions
-  const recentTransactions = props.transactions.slice(0,5);
+  const recentTransactions = props.transactions.slice(0, 5);
+
+  // Calculate money in (positive transactions) and money out (negative transactions)
+  const moneyIn = props.transactions
+    .filter(transaction => transaction.amount > 0)
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  const moneyOut = props.transactions
+    .filter(transaction => transaction.amount < 0)
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
 
   return (
     <div
       className="rounded-lg shadow-md p-4 w-full max-w-md transition-all duration-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200"
     >
       <h3 className="text-lg font-semibold mb-4">{props.title}</h3>
+      {/* Add money in and money out section */}
+      <div className="text-sm font-medium mb-4">
+        <div className="flex justify-between">
+          <span>Money In:</span>
+          <span className="text-green-600 dark:text-green-400">
+            {moneyIn.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span>Money Out:</span>
+          <span className="text-red-500 dark:text-red-400">
+            {Math.abs(moneyOut).toFixed(2)}
+          </span>
+        </div>
+      </div>
       <ul className="space-y-4">
         {recentTransactions.map((transaction, index) => (
           <li
