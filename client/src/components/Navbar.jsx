@@ -51,10 +51,9 @@ function Navbar() {
             bg-financial-primary dark:bg-gray-800 ${menuOpen ? "block" : "hidden"}`}
         >
           {[
-            [1, "login", "Login"],
-            [2, "signup", "Sign Up"],
-            [3, "home", "Home"],
-            [4, "investments", "Investments"],
+            [1, "home", "Home"],
+            [2, "transaction-details", "Transactions"],
+            [3, "investments", "Investments"],
           ].map(([id, url, title]) => (
             <li key={id}>
               <a
