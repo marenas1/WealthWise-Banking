@@ -3,9 +3,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
-axios.defaults.baseURL = "http://localhost:8000";
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Fallback to localhost if not defined in .env
+
+axios.defaults.baseURL = apiUrl;
+
 
 function LandingPage() {
+  console.log(apiUrl);
+ 
   const [linkToken, setLinkToken] = useState();
 
   useEffect(()=>{
