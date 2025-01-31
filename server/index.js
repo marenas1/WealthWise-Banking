@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const bodyParser = require("body-parser");
 const { Configuration, PlaidApi, PlaidEnvironments } = require("plaid");
 const dotenv = require("dotenv");
@@ -25,6 +26,14 @@ const plaidClient = new PlaidApi(configuration);
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+// Serve static files from the React build folder
+app.use(express.static(path.join(__dirname, "client/build")));
+
+
+// Catch-all handler for React routing
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client/build", "index.html"));
+});
 
 // ---- Create Public Token with Pre-Populated Account ----
 app.post('/sandbox/create_prepopulated_public_token', async (req, res) => {
