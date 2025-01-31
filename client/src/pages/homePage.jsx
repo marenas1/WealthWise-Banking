@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AccountBox from "../components/AccountBox";
+import AccountBox from "../components/accountBox";
 import Navbar from "../components/Navbar";
 import TransactionBox from "../components/TransactionBox";
 import IncomeExpenseChart from "../components/IncomeExpenseChart";
