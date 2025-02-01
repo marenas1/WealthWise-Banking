@@ -20,7 +20,7 @@ function LandingPage() {
     }
     fetchLinkToken();
   },[]);
-
+  console.log("link"+linkToken)
   //Plaid Link Hook
   const { open, ready } = usePlaidLink({
     token: linkToken,
