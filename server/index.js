@@ -26,7 +26,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 // ---- Create Public Token with Pre-Populated Account ----
 app.post('/sandbox/create_prepopulated_public_token', async (req, res) => {
   const { institution_id, initial_products } = req.body;
