@@ -1,0 +1,6 @@
+static_site:
+  buildCommand: "npm run build"
+  publishDirectory: "/dist"
+  routes:
+    - src: "/.*"
+      dest: "/index.html"
