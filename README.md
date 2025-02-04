@@ -1,4 +1,4 @@
-**WealthWise Banking** 💰
+**WealthWise Banking** 💰 Refactored Team Project To Implement Plaid Jan-Feb 2025
 
 **WealthWise Banking** is a personal finance and investment tracking application that leverages **Plaid** to securely link to user bank accounts, allowing them to track spending, view transaction history, and explore investment options.
 
