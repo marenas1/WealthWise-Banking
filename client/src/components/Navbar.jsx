@@ -30,7 +30,7 @@ function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center">
-          <Link to="/landing">
+          <Link to="/home">
             <img src={logo} alt="Logo" className="h-10 inline pr-1 rounded-md" />
           </Link>
           <h1 className="text-3xl font-bold text-white dark:text-gray-200">
