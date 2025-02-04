@@ -1,7 +1,7 @@
 import { usePlaidLink } from "react-plaid-link";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
 import Navbar from "../components/Navbar";
@@ -10,8 +10,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Fallb
 axios.defaults.baseURL = apiUrl;
 
 function LandingPage() {
-  console.log(apiUrl);
-  const navigate = useNavigate(); // ✅ Initialize navigate function
+  const navigate = useNavigate();
 
   const [linkToken, setLinkToken] = useState();
 
@@ -54,7 +53,7 @@ function LandingPage() {
         const transactions = transactionsResponse.data.transactions;
         sessionStorage.setItem("transactions", JSON.stringify(transactions));
 
-        navigate("/home"); // ✅ React Router navigation instead of window.location.href
+        navigate("/home");
       } catch (error) {
         console.error("Error exchanging public token for access token:", error);
       }

@@ -78,7 +78,7 @@ const IncomeExpenseChart = ({ labels, incomeData, expenseData }) => {
   );
 };
 
-// PropTypes validation
+
 IncomeExpenseChart.propTypes = {
   labels: PropTypes.arrayOf(PropTypes.string).isRequired,
   incomeData: PropTypes.arrayOf(PropTypes.number).isRequired,
