@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
-import Navbar from "../components/Navbar";
 
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Fallback to localhost if not defined in .env
 axios.defaults.baseURL = apiUrl;
@@ -63,7 +62,6 @@ function LandingPage() {
   return (
     
     <div className="bg-gray-50 min-h-screen">
-      <Navbar></Navbar>
       <header className="bg-financial-primary text-white py-4 shadow-md">
         <div className="container mx-auto px-6 flex justify-between items-center">
             <div className="flex items-center"> 
