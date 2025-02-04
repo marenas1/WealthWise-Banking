@@ -135,7 +135,7 @@ function LandingPage() {
 
       <footer className="bg-gray-800 text-white py-4 text-center">
         <p className="text-sm">
-          © 2024 Finance Tracker. All rights reserved.
+          © {new Date().getFullYear()} Finance Tracker. All rights reserved.
         </p>
       </footer>
     </div>
