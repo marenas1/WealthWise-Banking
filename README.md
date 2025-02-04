@@ -4,12 +4,24 @@
 
 ---
 
+**Video Demo**
+<div>
+    <a href="https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f">
+    </a>
+    <a href="https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d21089e023eb44e79f3d55ddad0b393f-with-play.gif">
+    </a>
+  </div>
+
+
+  
+---
+
 ## **Table of Contents**
 - [Hosting and Deployment](#hosting-and-deployment)
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [How Plaid Integration Works](#how-plaid-integration-works)
-- [Video Demo](#video-demo)
 - [License](#license)
 
 ---
@@ -69,11 +81,6 @@ WealthWise Banking utilizes a modern web stack to provide users with a fast and 
 5. **Storing Data in Session:**
    - All relevant data (transactions, account balances, and access tokens) is securely stored in the user's session storage for use throughout the application.
 
----
-
-## **Video Demo**
-
-<div style="position: relative; padding-bottom: 62.5%; height: 0;"><iframe src="https://www.loom.com/embed/d21089e023eb44e79f3d55ddad0b393f?sid=c37b80f2-7de3-4edf-af6e-21bcc2b553c1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 ---
 
 ## **License**
