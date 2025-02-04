@@ -73,10 +73,7 @@ WealthWise Banking utilizes a modern web stack to provide users with a fast and 
 
 ## **Video Demo**
 
-![Video Thumbnail](https://cdn.loom.com/sessions/thumbnails/d21089e023eb44e79f3d55ddad0b393f-with-play.gif)
-
-[![Watch the video](https://cdn.loom.com/sessions/thumbnails/d21089e023eb44e79f3d55ddad0b393f-with-play.gif)](https://www.loom.com/embed/d21089e023eb44e79f3d55ddad0b393f?sid=5370730b-b8d5-4d76-a986-a1d9ab57c354)
-
+<div style="position: relative; padding-bottom: 62.5%; height: 0;"><iframe src="https://www.loom.com/embed/d21089e023eb44e79f3d55ddad0b393f?sid=c37b80f2-7de3-4edf-af6e-21bcc2b553c1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 ---
 
 ## **License**
