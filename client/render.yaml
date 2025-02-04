@@ -1,6 +1,0 @@
-static_site:
-  buildCommand: "npm run build"
-  publishDirectory: "/dist"
-  routes:
-    - path: '/**'  # Match all routes
-      rewrite: '/index.html'  # Serve index.html for all routes
