@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
 
@@ -29,9 +30,9 @@ function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center">
-          <a href="landing">
+          <Link to="/landing">
             <img src={logo} alt="Logo" className="h-10 inline pr-1 rounded-md" />
-          </a>
+          </Link>
           <h1 className="text-3xl font-bold text-white dark:text-gray-200">
             WealthWise
           </h1>
@@ -51,17 +52,17 @@ function Navbar() {
             bg-financial-primary dark:bg-gray-800 ${menuOpen ? "block" : "hidden"}`}
         >
           {[
-            [1, "home", "Home"],
-            [2, "transaction-details", "Transactions"],
-            [3, "investments", "Investments"],
+            [1, "/home", "Home"],
+            [2, "/transaction-details", "Transactions"],
+            [3, "/investments", "Investments"],
           ].map(([id, url, title]) => (
             <li key={id}>
-              <a
-                href={url}
+              <Link
+                to={url}
                 className="text-lg hover:text-gray-300 text-white dark:text-gray-300 dark:hover:text-gray-400 duration-300 block"
               >
                 {title}
-              </a>
+              </Link>
             </li>
           ))}
 
