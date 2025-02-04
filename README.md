@@ -79,5 +79,5 @@ WealthWise Banking utilizes a modern web stack to provide users with a fast and 
 
 ## **License**
 
-This project is licensed under the MIT License – see the [LICENSE](LICENSE)or details.
+This project is licensed under the MIT License
 
