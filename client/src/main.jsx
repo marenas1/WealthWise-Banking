@@ -10,7 +10,7 @@ import "./index.css"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename='wealthwise-banking-client-production.up.railway.app'>
         <Routes>
           <Route index element={<LandingPage></LandingPage>} />
           <Route path="/home" element={<HomePage></HomePage>} />
