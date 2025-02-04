@@ -1,60 +1,63 @@
-import { usePlaidLink } from 'react-plaid-link';
+import { usePlaidLink } from "react-plaid-link";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import { FaChartLine, FaPiggyBank, FaRegMoneyBillAlt } from "react-icons/fa";
 import logo from "../assets/logoWealthwise.png";
-import Navbar from '../components/Navbar';
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Fallback to localhost if not defined in .env
+import Navbar from "../components/Navbar";
 
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Fallback to localhost if not defined in .env
 axios.defaults.baseURL = apiUrl;
-
 
 function LandingPage() {
   console.log(apiUrl);
- 
+  const navigate = useNavigate(); // ✅ Initialize navigate function
+
   const [linkToken, setLinkToken] = useState();
 
-  useEffect(()=>{
-    async function fetchLinkToken(){
+  useEffect(() => {
+    async function fetchLinkToken() {
       const response = await axios.post("/create_link_token");
       setLinkToken(response.data.link_token);
     }
     fetchLinkToken();
-  },[]);
-  console.log("link"+linkToken)
-  //Plaid Link Hook
+  }, []);
+
+  console.log("link" + linkToken);
+
+  // Plaid Link Hook
   const { open, ready } = usePlaidLink({
     token: linkToken,
     onSuccess: async (public_token, metadata) => {
-        try {
-            console.log(metadata)
-            const accessTokenResponse = await axios.post("/exchange_public_token", { public_token });
-            const accessToken = accessTokenResponse.data.accessToken;
-    
-            sessionStorage.setItem("accessToken", accessToken);
+      try {
+        console.log(metadata);
+        const accessTokenResponse = await axios.post("/exchange_public_token", { public_token });
+        const accessToken = accessTokenResponse.data.accessToken;
 
-            const accounts = await axios.post("/get_account_balances", { access_token: accessToken });
-            sessionStorage.setItem("accounts", JSON.stringify(accounts));
-            
-            const today = new Date();
-            const startDate = new Date(today);
-            startDate.setDate(today.getDate() - 60);
-            const formattedStartDate = startDate.toISOString().split("T")[0];
-            const endDate = today.toISOString().split("T")[0];
+        sessionStorage.setItem("accessToken", accessToken);
 
-            const transactionsResponse = await axios.post("/get_transactions", {
-              access_token: accessToken,
-              start_date: formattedStartDate,
-              end_date: endDate
-            });
+        const accounts = await axios.post("/get_account_balances", { access_token: accessToken });
+        sessionStorage.setItem("accounts", JSON.stringify(accounts));
 
-            const transactions = transactionsResponse.data.transactions;
-            sessionStorage.setItem("transactions", JSON.stringify(transactions));
-            
-            window.location.href = "/home";
-          } catch (error) {
-            console.error("Error exchanging public token for access token:", error);
-          }
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 60);
+        const formattedStartDate = startDate.toISOString().split("T")[0];
+        const endDate = today.toISOString().split("T")[0];
+
+        const transactionsResponse = await axios.post("/get_transactions", {
+          access_token: accessToken,
+          start_date: formattedStartDate,
+          end_date: endDate,
+        });
+
+        const transactions = transactionsResponse.data.transactions;
+        sessionStorage.setItem("transactions", JSON.stringify(transactions));
+
+        navigate("/home"); // ✅ React Router navigation instead of window.location.href
+      } catch (error) {
+        console.error("Error exchanging public token for access token:", error);
+      }
     },
   });
 
