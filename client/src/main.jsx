@@ -10,7 +10,7 @@ import "./index.css"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <BrowserRouter basename='/'>
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage></LandingPage>} />
           <Route path="/home" element={<HomePage></HomePage>} />
