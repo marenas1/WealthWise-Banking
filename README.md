@@ -5,16 +5,8 @@
 ---
 
 **Video Demo**
-<div>
-    <a href="https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f">
-    </a>
-    <a href="https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d21089e023eb44e79f3d55ddad0b393f-with-play.gif">
-    </a>
-  </div>
+[![Watch the video](https://cdn.loom.com/sessions/thumbnails/YOUR_VIDEO_ID-with-play.gif)](https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f)
 
-
-  
 ---
 
 ## **Table of Contents**
