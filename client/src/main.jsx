@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
       <BrowserRouter basename='/'>
         <Routes>
-          <Route index element={<LandingPage></LandingPage>} />
+          <Route path="/" element={<LandingPage></LandingPage>} />
           <Route path="/home" element={<HomePage></HomePage>} />
           <Route path="/transaction-details" element={<TransactionDetailsPage></TransactionDetailsPage>}/>
           <Route path="/investments" element={<InvestmentsPage></InvestmentsPage>}></Route>
