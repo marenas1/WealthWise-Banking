@@ -5,7 +5,8 @@
 ---
 
 **Video Demo**
-[![Watch the video](https://cdn.loom.com/sessions/thumbnails/YOUR_VIDEO_ID-with-play.gif)](https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f)
+[![Watch the video](https://cdn.loom.com/sessions/thumbnails/d21089e023eb44e79f3d55ddad0b393f-with-play.gif)](https://www.loom.com/share/d21089e023eb44e79f3d55ddad0b393f)
+
 
 ---
 
